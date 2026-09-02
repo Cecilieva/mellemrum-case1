@@ -130,13 +130,6 @@ export default function RegistrationsPage() {
       <header className="admin-header">
         <p className="eyebrow">Internt overblik</p>
         <h1>Tilmeldinger</h1>
-        <p>
-          {isLoading
-            ? "Henter tilmeldinger..."
-            : error
-              ? "Tilmeldingerne kunne ikke hentes"
-              : `${registrations.length} tilmeldinger i alt`}
-        </p>
       </header>
       <main className={styles.page}>
         {isLoading && (
