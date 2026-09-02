@@ -162,3 +162,6 @@ npm run preview
 ændring af favicon
 
 Ændring i space i hero tekst
+
+Ændring i footer
+
