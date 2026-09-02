@@ -111,7 +111,7 @@ Kontrollér, at:
 - du kan åbne en eventside
 - siden `/tilmeldinger` viser de eksisterende tilmeldinger
 
-Tilmeldingsformularen logger foreløbig de indtastede værdier i konsollen. Den gemmer endnu ikke tilmeldingen i Supabase.
+Tilmeldingsformularen gemmer tilmeldingen i Supabase og viser en bekræftelse, når den er gennemført.
 
 ## 5. Deploy appen
 
@@ -158,8 +158,6 @@ npm run lint
 npm run build
 npm run preview
 ```
-
-
 
 ændring af favicon
 
