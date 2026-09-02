@@ -85,17 +85,24 @@ export default function HomePage() {
         </section>
 
         <section className="event-grid">
-          {filteredEvents.map((event) => (
+          {filteredEvents.map((event, index) => (
             <article className="event-card" key={event.id}>
-              <img src={event.image} alt="" />
+              <img
+                src={event.image}
+                alt=""
+                loading={index < 3 ? "eager" : "lazy"}
+                decoding="async"
+              />
               <div className="event-card-content">
                 <p className="event-category">{event.category}</p>
                 <h3>{event.title}</h3>
                 <p>{event.summary}</p>
+
                 <div className="event-meta">
                   <span>{formatEventDate(event.date)}</span>
                   <span>{event.venueName}</span>
                 </div>
+
                 <Link className="card-link" to={`/events/${event.id}`}>
                   Læs mere
                 </Link>
