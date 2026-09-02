@@ -3,6 +3,23 @@
   min-width: 0;
 }
 
+.stateMessage,
+.errorMessage {
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.stateMessage {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.errorMessage {
+  background: #fde8e5;
+  color: #7d2017;
+}
+
 .srOnly {
   height: 1px;
   margin: -1px;
