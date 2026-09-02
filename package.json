@@ -14,6 +14,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.46.0",
     "date-fns": "^4.4.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
