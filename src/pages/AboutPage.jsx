@@ -1,6 +1,11 @@
+import { useEffect } from "react";
 import { Link } from "react-router";
 
 export default function AboutPage() {
+  useEffect(() => {
+    document.title = "Om Mellemrum | Mellemrum";
+  }, []);
+
   return (
     <>
       <header className="page-header about-header">
