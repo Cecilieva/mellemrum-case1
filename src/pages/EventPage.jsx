@@ -17,7 +17,9 @@ export default function EventPage() {
   useEffect(() => {
     async function getEvent() {
       try {
-        const data = await supabaseRequest(`/events?id=eq.${eventId}&select=*`);
+        const data = await supabaseRequest(
+          `/events?select=id,title,summary,description,date,category,image,price,venue:venues(name,address,postalCode,city,website)&id=eq.${eventId}`,
+        );
         if (!data[0]) {
           throw new Error("Eventet blev ikke fundet.");
         }
