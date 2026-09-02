@@ -20,7 +20,7 @@ export default function HomePage() {
 
   const filteredEvents = events.filter((event) => {
     const searchText =
-      `${event.title} ${event.summary} ${event.venueName}`.toLowerCase();
+      `${event.title} ${event.summary} ${event.venue?.name}`.toLowerCase();
     const matchesSearch = searchText.includes(search.toLowerCase());
     const matchesCategory = category === "Alle" || event.category === category;
 
@@ -100,7 +100,7 @@ export default function HomePage() {
 
                 <div className="event-meta">
                   <span>{formatEventDate(event.date)}</span>
-                  <span>{event.venueName}</span>
+                  <span>{event.venue?.name}</span>
                 </div>
 
                 <Link className="card-link" to={`/events/${event.id}`}>
