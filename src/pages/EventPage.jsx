@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const headers = {
-  apikey: import.meta.env.VITE_SUPABASE_APIKEY,
-  Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_APIKEY}`,
-  "Content-Type": "application/json",
-};
+import EventDetails from "../components/EventDetails";
+import RegistrationForm from "../components/RegistrationForm";
+import { supabaseRequest } from "../event";
 
 export default function EventPage() {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [submitStatus, setSubmitStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     document.title = event ? `${event.title} | Mellemrum` : "Event | Mellemrum";
@@ -21,74 +16,31 @@ export default function EventPage() {
 
   useEffect(() => {
     async function getEvent() {
-      const response = await fetch(`${SUPABASE_URL}/events?id=eq.${eventId}`, {
-        headers,
-      });
-      const data = await response.json();
-      setEvent(data[0]);
+      try {
+        const data = await supabaseRequest(`/events?id=eq.${eventId}&select=*`);
+        if (!data[0]) {
+          throw new Error("Eventet blev ikke fundet.");
+        }
+        setEvent(data[0]);
+      } catch (eventError) {
+        setError(eventError.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     getEvent();
   }, [eventId]);
 
-  async function handleSubmit(eventSubmit) {
-    eventSubmit.preventDefault();
-    setSubmitStatus("sender");
-
-    try {
-      const userLookupResponse = await fetch(
-        `${SUPABASE_URL}/users?select=id&email=eq.${encodeURIComponent(email)}`,
-        { headers },
-      );
-
-      if (!userLookupResponse.ok) {
-        throw new Error("Dine oplysninger kunne ikke kontrolleres.");
-      }
-
-      const matchingUsers = await userLookupResponse.json();
-      let user = matchingUsers[0];
-
-      if (!user) {
-        const userResponse = await fetch(`${SUPABASE_URL}/users`, {
-          method: "POST",
-          headers: { ...headers, Prefer: "return=representation" },
-          body: JSON.stringify({ name, email }),
-        });
-
-        if (!userResponse.ok) {
-          throw new Error("Dine oplysninger kunne ikke gemmes.");
-        }
-
-        [user] = await userResponse.json();
-      }
-
-      const response = await fetch(`${SUPABASE_URL}/registrations`, {
-        method: "POST",
-        headers: { ...headers, Prefer: "return=minimal" },
-        body: JSON.stringify({
-          userId: user.id,
-          eventId: Number(eventId),
-          status: "Ny",
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Tilmeldingen kunne ikke gemmes.");
-      }
-
-      setName("");
-      setEmail("");
-      setSubmitStatus("success");
-    } catch (submitError) {
-      setSubmitStatus(submitError.message);
-    }
+  if (isLoading) {
+    return <main className="event-page">Henter event...</main>;
   }
 
-  if (!event) {
-    return null;
+  if (error || !event) {
+    return (
+      <main className="event-page">{error || "Eventet blev ikke fundet."}</main>
+    );
   }
-
-  const date = new Date(event.date);
 
   return (
     <>
@@ -98,89 +50,8 @@ export default function EventPage() {
         </Link>
 
         <section className="event-detail">
-          <img src={event.image} alt="" />
-          <div className="event-detail-content">
-            <p className="event-category">{event.category}</p>
-            <h1>{event.title}</h1>
-            <p className="lead">{event.summary}</p>
-            <div className="detail-list">
-              <p>
-                <strong>Dato</strong>
-                {date.toLocaleDateString("da-DK", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                })}{" "}
-                kl.{" "}
-                {date.toLocaleTimeString("da-DK", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-              <p>
-                <strong>Sted</strong>
-                <span>
-                  {event.venueName}
-                  <br />
-                  {event.venueAddress}, {event.venuePostalCode}{" "}
-                  {event.venueCity}
-                  {event.venueWebsite && (
-                    <>
-                      <br />
-                      <a href={event.venueWebsite}>Besøg venue</a>
-                    </>
-                  )}
-                </span>
-              </p>
-              <p>
-                <strong>Pris</strong>
-                {event.price === 0 ? "Gratis" : `${event.price} kr.`}
-              </p>
-            </div>
-            <p>{event.description}</p>
-          </div>
-        </section>
-
-        <section className="signup-panel">
-          <div>
-            <p className="eyebrow dark">Tilmelding</p>
-            <h2>Reserver din plads</h2>
-            <p>
-              Udfyld formularen, så sender vi din tilmelding til arrangøren.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            <label>
-              Navn
-              <input
-                required
-                value={name}
-                onChange={(inputEvent) => setName(inputEvent.target.value)}
-              />
-            </label>
-            <span>E-mail</span>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(inputEvent) => setEmail(inputEvent.target.value)}
-              placeholder="dig@example.com"
-            />
-            <button disabled={submitStatus === "sender"} type="submit">
-              {submitStatus === "sender" ? "Sender..." : "Tilmeld mig"}
-            </button>
-            {submitStatus === "success" && (
-              <p className="form-message">
-                Du er tilmeldt. Vi glæder os til at se dig.
-              </p>
-            )}
-            {submitStatus &&
-              submitStatus !== "sender" &&
-              submitStatus !== "success" && (
-                <p className="form-message">{submitStatus}</p>
-              )}
-          </form>
+          <EventDetails event={event} />
+          <RegistrationForm eventId={eventId} />
         </section>
       </main>
     </>
