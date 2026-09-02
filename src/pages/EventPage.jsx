@@ -16,6 +16,10 @@ export default function EventPage() {
   const [submitStatus, setSubmitStatus] = useState("");
 
   useEffect(() => {
+    document.title = event ? `${event.title} | Mellemrum` : "Event | Mellemrum";
+  }, [event]);
+
+  useEffect(() => {
     async function getEvent() {
       const response = await fetch(`${SUPABASE_URL}/events?id=eq.${eventId}`, {
         headers,

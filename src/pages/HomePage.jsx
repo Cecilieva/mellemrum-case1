@@ -13,6 +13,10 @@ export default function HomePage() {
   const [category, setCategory] = useState("Alle");
 
   useEffect(() => {
+    document.title = "Events | Mellemrum";
+  }, []);
+
+  useEffect(() => {
     async function getEvents() {
       const response = await fetch(`${SUPABASE_URL}/events?order=date.asc`, {
         headers,

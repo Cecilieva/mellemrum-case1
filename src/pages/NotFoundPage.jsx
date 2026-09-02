@@ -1,6 +1,11 @@
+import { useEffect } from "react";
 import { Link } from "react-router";
 
 export default function NotFoundPage() {
+  useEffect(() => {
+    document.title = "Siden blev ikke fundet | Mellemrum";
+  }, []);
+
   return (
     <>
       <header>

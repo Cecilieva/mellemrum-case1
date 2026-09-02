@@ -13,6 +13,10 @@ export default function RegistrationsPage() {
   const [registrationCount, setRegistrationCount] = useState(0);
 
   useEffect(() => {
+    document.title = "Tilmeldinger | Mellemrum";
+  }, []);
+
+  useEffect(() => {
     async function getRegistrations() {
       const response = await fetch(
         `${SUPABASE_URL}/registrations?select=*,users(name,email),events(title,date,venueName)&order=createdAt.desc`,
