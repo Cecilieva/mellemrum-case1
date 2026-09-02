@@ -4,7 +4,8 @@ import { Link, useParams } from "react-router";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const headers = {
   apikey: import.meta.env.VITE_SUPABASE_APIKEY,
-  "Content-Type": "application/json"
+  Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_APIKEY}`,
+  "Content-Type": "application/json",
 };
 
 export default function EventPage() {
@@ -12,10 +13,13 @@ export default function EventPage() {
   const [event, setEvent] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [submitStatus, setSubmitStatus] = useState("");
 
   useEffect(() => {
     async function getEvent() {
-      const response = await fetch(`${SUPABASE_URL}/events?id=eq.${eventId}`, { headers });
+      const response = await fetch(`${SUPABASE_URL}/events?id=eq.${eventId}`, {
+        headers,
+      });
       const data = await response.json();
       setEvent(data[0]);
     }
@@ -25,7 +29,55 @@ export default function EventPage() {
 
   async function handleSubmit(eventSubmit) {
     eventSubmit.preventDefault();
-    console.log({ name, email, event: event.title });
+    setSubmitStatus("sender");
+
+    try {
+      const userLookupResponse = await fetch(
+        `${SUPABASE_URL}/users?select=id&email=eq.${encodeURIComponent(email)}`,
+        { headers },
+      );
+
+      if (!userLookupResponse.ok) {
+        throw new Error("Dine oplysninger kunne ikke kontrolleres.");
+      }
+
+      const matchingUsers = await userLookupResponse.json();
+      let user = matchingUsers[0];
+
+      if (!user) {
+        const userResponse = await fetch(`${SUPABASE_URL}/users`, {
+          method: "POST",
+          headers: { ...headers, Prefer: "return=representation" },
+          body: JSON.stringify({ name, email }),
+        });
+
+        if (!userResponse.ok) {
+          throw new Error("Dine oplysninger kunne ikke gemmes.");
+        }
+
+        [user] = await userResponse.json();
+      }
+
+      const response = await fetch(`${SUPABASE_URL}/registrations`, {
+        method: "POST",
+        headers: { ...headers, Prefer: "return=minimal" },
+        body: JSON.stringify({
+          userId: user.id,
+          eventId: Number(eventId),
+          status: "Ny",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Tilmeldingen kunne ikke gemmes.");
+      }
+
+      setName("");
+      setEmail("");
+      setSubmitStatus("success");
+    } catch (submitError) {
+      setSubmitStatus(submitError.message);
+    }
   }
 
   if (!event) {
@@ -50,15 +102,24 @@ export default function EventPage() {
             <div className="detail-list">
               <p>
                 <strong>Dato</strong>
-                {date.toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "long" })} kl.{" "}
-                {date.toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit" })}
+                {date.toLocaleDateString("da-DK", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}{" "}
+                kl.{" "}
+                {date.toLocaleTimeString("da-DK", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </p>
               <p>
                 <strong>Sted</strong>
                 <span>
                   {event.venueName}
                   <br />
-                  {event.venueAddress}, {event.venuePostalCode} {event.venueCity}
+                  {event.venueAddress}, {event.venuePostalCode}{" "}
+                  {event.venueCity}
                   {event.venueWebsite && (
                     <>
                       <br />
@@ -80,21 +141,41 @@ export default function EventPage() {
           <div>
             <p className="eyebrow dark">Tilmelding</p>
             <h2>Reserver din plads</h2>
-            <p>Udfyld formularen, så sender vi din tilmelding til arrangøren.</p>
+            <p>
+              Udfyld formularen, så sender vi din tilmelding til arrangøren.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <label>
               Navn
-              <input value={name} onChange={(inputEvent) => setName(inputEvent.target.value)} />
+              <input
+                required
+                value={name}
+                onChange={(inputEvent) => setName(inputEvent.target.value)}
+              />
             </label>
             <span>E-mail</span>
             <input
+              type="email"
+              required
               value={email}
               onChange={(inputEvent) => setEmail(inputEvent.target.value)}
               placeholder="dig@example.com"
             />
-            <button type="submit">Tilmeld mig</button>
+            <button disabled={submitStatus === "sender"} type="submit">
+              {submitStatus === "sender" ? "Sender..." : "Tilmeld mig"}
+            </button>
+            {submitStatus === "success" && (
+              <p className="form-message">
+                Du er tilmeldt. Vi glæder os til at se dig.
+              </p>
+            )}
+            {submitStatus &&
+              submitStatus !== "sender" &&
+              submitStatus !== "success" && (
+                <p className="form-message">{submitStatus}</p>
+              )}
           </form>
         </section>
       </main>
