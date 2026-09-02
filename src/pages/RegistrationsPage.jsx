@@ -10,7 +10,7 @@ const headers = {
 
 export default function RegistrationsPage() {
   const [registrations, setRegistrations] = useState([]);
-  const [registrationCount, setRegistrationCount] = useState(0);
+  const registrationCount = registrations.length;
 
   useEffect(() => {
     document.title = "Tilmeldinger | Mellemrum";
@@ -24,7 +24,6 @@ export default function RegistrationsPage() {
       );
       const data = await response.json();
       setRegistrations(data);
-      setRegistrationCount(data.length);
     }
 
     getRegistrations();
