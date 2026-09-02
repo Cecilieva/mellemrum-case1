@@ -49,10 +49,8 @@ export default function EventPage() {
           ← Alle events
         </Link>
 
-        <section className="event-detail">
-          <EventDetails event={event} />
-          <RegistrationForm eventId={eventId} />
-        </section>
+        <EventDetails event={event} />
+        <RegistrationForm eventId={eventId} />
       </main>
     </>
   );
