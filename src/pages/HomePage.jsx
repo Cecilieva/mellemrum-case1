@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const headers = {
-  apikey: import.meta.env.VITE_SUPABASE_APIKEY,
-  "Content-Type": "application/json",
-};
+import { getEvents } from "../event";
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
@@ -13,19 +8,9 @@ export default function HomePage() {
   const [category, setCategory] = useState("Alle");
 
   useEffect(() => {
-    document.title = "Events | Mellemrum";
-  }, []);
-
-  useEffect(() => {
-    async function getEvents() {
-      const response = await fetch(`${SUPABASE_URL}/events?order=date.asc`, {
-        headers,
-      });
-      const data = await response.json();
-      setEvents(data);
-    }
-
-    getEvents();
+    getEvents()
+      .then(setEvents)
+      .catch(() => setEvents([]));
   }, []);
 
   const categories = [
@@ -100,17 +85,24 @@ export default function HomePage() {
         </section>
 
         <section className="event-grid">
-          {filteredEvents.map((event) => (
+          {filteredEvents.map((event, index) => (
             <article className="event-card" key={event.id}>
-              <img src={event.image} alt="" />
+              <img
+                src={event.image}
+                alt=""
+                loading={index < 3 ? "eager" : "lazy"}
+                decoding="async"
+              />
               <div className="event-card-content">
                 <p className="event-category">{event.category}</p>
                 <h3>{event.title}</h3>
                 <p>{event.summary}</p>
+
                 <div className="event-meta">
                   <span>{formatEventDate(event.date)}</span>
                   <span>{event.venueName}</span>
                 </div>
+
                 <Link className="card-link" to={`/events/${event.id}`}>
                   Læs mere
                 </Link>
