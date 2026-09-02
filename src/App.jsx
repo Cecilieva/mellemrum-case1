@@ -5,11 +5,13 @@ import AboutPage from "./pages/AboutPage";
 import EventPage from "./pages/EventPage";
 import RegistrationsPage from "./pages/RegistrationsPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ScrollToTop from "./components/scroll";
 
 export default function App() {
   return (
     <>
       <Navbar />
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/events/:eventId" element={<EventPage />} />
