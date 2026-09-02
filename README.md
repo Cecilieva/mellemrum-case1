@@ -158,3 +158,7 @@ npm run lint
 npm run build
 npm run preview
 ```
+
+
+
+ændring af favicon
