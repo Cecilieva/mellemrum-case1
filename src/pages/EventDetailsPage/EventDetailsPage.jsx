@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import EventDetails from "../components/EventDetails";
-import RegistrationForm from "../components/RegistrationForm";
-import { supabaseRequest } from "../event";
+import EventDetails from "../../components/EventDetails";
+import RegistrationForm from "../../components/RegistrationForm";
+import { supabaseRequest } from "../../event";
+import "./EventDetailsPage.module.css";
 
-export default function EventPage() {
+export default function EventDetailsPage() {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,9 +19,7 @@ export default function EventPage() {
     async function getEvent() {
       try {
         const data = await supabaseRequest(`/events?id=eq.${eventId}&select=*`);
-        if (!data[0]) {
-          throw new Error("Eventet blev ikke fundet.");
-        }
+        if (!data[0]) throw new Error("Eventet blev ikke fundet.");
         setEvent(data[0]);
       } catch (eventError) {
         setError(eventError.message);
@@ -28,30 +27,22 @@ export default function EventPage() {
         setIsLoading(false);
       }
     }
-
     getEvent();
   }, [eventId]);
 
-  if (isLoading) {
-    return <main className="event-page">Henter event...</main>;
-  }
-
-  if (error || !event) {
+  if (isLoading) return <main className="event-page">Henter event...</main>;
+  if (error || !event)
     return (
       <main className="event-page">{error || "Eventet blev ikke fundet."}</main>
     );
-  }
 
   return (
-    <>
-      <main className="event-page">
-        <Link className="back-link" to="/">
-          ← Alle events
-        </Link>
-
-        <EventDetails event={event} />
-        <RegistrationForm eventId={eventId} />
-      </main>
-    </>
+    <main className="event-page">
+      <Link className="back-link" to="/">
+        ← Alle events
+      </Link>
+      <EventDetails event={event} />
+      <RegistrationForm eventId={eventId} />
+    </main>
   );
 }

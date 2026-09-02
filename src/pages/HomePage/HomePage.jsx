@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
-import { getEvents } from "../event";
+import { getEvents } from "../../event";
+import EventCard from "../../components/EventCard/EventCard";
+import "./HomePage.module.css";
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
@@ -20,7 +21,7 @@ export default function HomePage() {
 
   const filteredEvents = events.filter((event) => {
     const searchText =
-      `${event.title} ${event.summary} ${event.venueName}`.toLowerCase();
+      `${event.title} ${event.summary} ${event.venue?.name}`.toLowerCase();
     const matchesSearch = searchText.includes(search.toLowerCase());
     const matchesCategory = category === "Alle" || event.category === category;
 
@@ -86,28 +87,12 @@ export default function HomePage() {
 
         <section className="event-grid">
           {filteredEvents.map((event, index) => (
-            <article className="event-card" key={event.id}>
-              <img
-                src={event.image}
-                alt=""
-                loading={index < 3 ? "eager" : "lazy"}
-                decoding="async"
-              />
-              <div className="event-card-content">
-                <p className="event-category">{event.category}</p>
-                <h3>{event.title}</h3>
-                <p>{event.summary}</p>
-
-                <div className="event-meta">
-                  <span>{formatEventDate(event.date)}</span>
-                  <span>{event.venueName}</span>
-                </div>
-
-                <Link className="card-link" to={`/events/${event.id}`}>
-                  Læs mere
-                </Link>
-              </div>
-            </article>
+            <EventCard
+              event={event}
+              formatEventDate={formatEventDate}
+              index={index}
+              key={event.id}
+            />
           ))}
         </section>
       </main>

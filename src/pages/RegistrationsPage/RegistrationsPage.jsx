@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import "./RegistrationsPage.module.css";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const headers = {
@@ -25,7 +26,6 @@ export default function RegistrationsPage() {
       const data = await response.json();
       setRegistrations(data);
     }
-
     getRegistrations();
   }, []);
 
