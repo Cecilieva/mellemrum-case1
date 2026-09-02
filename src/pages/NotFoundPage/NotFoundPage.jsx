@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
+import "./NotFoundPage.module.css";
 
 export default function NotFoundPage() {
   useEffect(() => {

@@ -21,6 +21,6 @@ export async function supabaseRequest(path, options = {}) {
 
 export function getEvents() {
   return supabaseRequest(
-    "/events?select=id,title,summary,date,venueName,category,image&order=date.asc",
+    "/events?select=id,title,summary,date,category,image,venue:venues(name)&order=date.asc",
   );
 }

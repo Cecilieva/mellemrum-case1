@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
+import "./AboutPage.module.css";
 
 export default function AboutPage() {
   useEffect(() => {
@@ -34,7 +35,6 @@ export default function AboutPage() {
             </p>
           </div>
         </section>
-
         <section
           className="about-audiences"
           aria-labelledby="about-audiences-title"
@@ -66,7 +66,6 @@ export default function AboutPage() {
             </article>
           </div>
         </section>
-
         <section
           className="about-flow-section"
           aria-labelledby="about-flow-title"
@@ -93,7 +92,6 @@ export default function AboutPage() {
             </li>
           </ol>
         </section>
-
         <section className="about-city" aria-labelledby="about-city-title">
           <figure>
             <img
