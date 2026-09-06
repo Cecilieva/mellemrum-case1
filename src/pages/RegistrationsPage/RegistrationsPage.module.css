@@ -39,7 +39,7 @@
 }
 
 .toolbar h2 {
-  font-size: 1.4rem;
+  font-size: 2rem;
   font-weight: 600;
   margin: 0 0 0.25rem;
 }
@@ -47,7 +47,7 @@
 .toolbar p,
 .empty {
   color: #6b6b68;
-  font-size: 0.85rem;
+  font-size: 1rem;
   margin: 0;
 }
 
@@ -66,16 +66,17 @@
   flex: 0 0 auto;
 }
 
-.search input {
-  border: 0;
-  min-height: 42px;
-  outline: 0;
-  padding: 0.55rem 0.75rem 0.55rem 0;
-  width: 250px;
+.search:focus-within {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(23, 63, 53, 0.16);
 }
 
-.search input:focus {
-  box-shadow: none;
+.search input {
+  border: 0;
+  min-height: 44px;
+  outline: none;
+  padding: 0.55rem 0.75rem 0.55rem 0;
+  width: 250px;
 }
 
 .groups {
@@ -114,14 +115,14 @@
 }
 
 .groupTitle > span:first-of-type {
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
 .date,
 .total {
   color: #6b6b68;
-  font-size: 0.8rem;
+  font-size: 1rem;
   white-space: nowrap;
 }
 
@@ -153,19 +154,19 @@
 }
 
 .row strong {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
 .row small {
-  color: #9c9b95;
+  color: #5f6662;
   font-size: 0.75rem;
   margin-top: 0.15rem;
 }
 
 .badge {
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 500;
   padding: 0.25rem 0.65rem;
   white-space: nowrap;
